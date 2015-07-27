@@ -18,6 +18,8 @@ describe "ActiveRecord Obstacle Course" do
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
+    orders_of_500 = Order.where(amount: 500)
+    orders_of_200 = Order.where(amount: 200)
     # Get the tests below to pass using ActiveRecord's `where` instead of
     # the Ruby implementation above.
     # ------------------------------------------------------------
@@ -30,12 +32,12 @@ describe "ActiveRecord Obstacle Course" do
   it 'finds multiple items by id' do
     ids = [item_1.id, item_2.id, item_4.id]
     # ----------------------- Using Ruby -------------------------
-    items = Item.all.select { |item| ids.include?(item.id) }
+    items = Item.all.select { |x| ids.include?(x.id) }
     # ------------------------------------------------------------
 
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    items = Item.find(ids) # throw active record this collection of ids, `ids`, and get the objects that matches an element in that array/collection
     # ------------------------------------------------------------
 
     # Expectation
@@ -48,7 +50,7 @@ describe "ActiveRecord Obstacle Course" do
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    orders = Order.order(amount: :desc, id: :desc)
     # ------------------------------------------------------------
 
     # Expectation
@@ -61,7 +63,7 @@ describe "ActiveRecord Obstacle Course" do
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    names = Item.pluck(:name)
     # ------------------------------------------------------------
 
     # Expectation
@@ -74,7 +76,7 @@ describe "ActiveRecord Obstacle Course" do
     # -----------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    average = Order.average(:amount)
     # ------------------------------------------------------------
 
     # Expectation
@@ -87,7 +89,7 @@ describe "ActiveRecord Obstacle Course" do
     # -----------------------------------------------------------
 
     # ------------------ Using ActiveRecord ---------------------
-    # Solution goes here
+    Order.sum(:amount)
     # -----------------------------------------------------------
 
     # Expectation
@@ -101,7 +103,7 @@ describe "ActiveRecord Obstacle Course" do
     # -----------------------------------------------------------
 
     # ------------------ Improved Solution ----------------------
-    # Solution goes here
+    orders = item_4.orders
     # -----------------------------------------------------------
 
     # Expectation
@@ -121,7 +123,8 @@ describe "ActiveRecord Obstacle Course" do
     # ------------------------------------------------------------
 
     # ------------------ ActiveRecord Solution ----------------------
-    # Solution goes here
+    # find items that have been ordered
+    ordered_items = Item.joins(:orders).distinct
     # ---------------------------------------------------------------
 
     # Expectations
@@ -151,7 +154,7 @@ describe "ActiveRecord Obstacle Course" do
     expect(ordered_items_names).to eq(["Thing 1", "Thing 2", "Thing 3", "Thing 4", "Thing 5"])
   end
 
-  xit "returns the names of items that have been ordered without n+1 queries" do
+  it "returns the names of items that have been ordered without n+1 queries" do
     # What is an n+1 query?
     # This video is older, but the concepts explained are still relevant:
     # http://railscasts.com/episodes/372-bullet
@@ -162,7 +165,7 @@ describe "ActiveRecord Obstacle Course" do
     Bullet.start_request
 
     # ------------------------------------------------------
-    orders = Order.all # Edit only this line
+    orders = Order.includes(:items) # Edit only this line
     # ------------------------------------------------------
 
     # Do not edit below this line
