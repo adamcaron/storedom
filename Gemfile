@@ -15,6 +15,7 @@ gem 'less-rails-bootstrap'
 
 group :development do
   gem 'spring'
+  gem 'rspec-rails'
 end
 
 group :development, :test do
